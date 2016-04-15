@@ -1,21 +1,18 @@
 {% extends "base.html" %}
 
-{% block page_header %}SCOREBOARD{% endblock %}
+{% block page_header %}Scoreboard{% endblock %}
 
 {% block content %}   
-    <div class="well">
-        <h4>RuCTF Quals Afterparty!</h4>
-	Game is over. Checksystem will work 2 weeks after the end of the competition and will go down on March, 24. We will try to keep all services up. Final scoreboard will be published soon on official site <a href="http://ructf.org/2014">http://ructf.org/2014</a>.
-    </div>
-
     <table class="table table-striped table-hover table-responsive">
     <thead>
       <th>#</th><th>Team name</th><th>Score</th>
     </thead>
     {% for team in teams %}
-        <tr>
-            <td width=50>{{forloop.counter}}</td><td class="team-name"><a href="{{ team.get_absolute_url }}">{{ team.name }}</a></td><td class="team-score">{{ team.score|default_if_none:'0'}}</td>
-        </tr>
+        {% if team.score or show_zeros %}
+            <tr>
+                <td width=50>{{forloop.counter}}</td><td class="team-name"><a href="{{ team.get_absolute_url }}">{{ team.name }}</a></td><td class="team-score">{{ team.score|default_if_none:'0'}}</td>
+            </tr>
+        {% endif %}
     {% endfor %}
     </table>
 {% endblock %}

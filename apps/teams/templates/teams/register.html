@@ -1,10 +1,12 @@
 {% extends "base.html" %}
 
-{% block page_header %}Login{% endblock %}
+{% block title %}Registration{% endblock %}
+
+{% block page_header %}Registration{% endblock %}
 
 {% block content %}
-
-    <form action="{% url 'login' %}" method="post" class="form-signin">
+    
+    <form action="{% url 'register' %}" method="post" class="form-signin">
         {% csrf_token %}
 
         <label for="login" class="sr-only">Login</label>
@@ -13,9 +15,8 @@
 
         <label for="password" class="sr-only">Password</label>
         <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
-        {{ form.password.errors }}
 
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Register</button>
     </form>
 
 {% endblock %}

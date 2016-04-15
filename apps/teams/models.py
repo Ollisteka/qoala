@@ -39,6 +39,8 @@ class Team(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(help_text=_('staff status'), blank=False, null=False, default=False, db_index=True)
     is_active = models.BooleanField(help_text=_('User can log in'), blank=False, null=False, default=True, db_index=True)
     token = models.CharField(max_length=64, unique=True, blank=False, null=True, db_index=True)
+    in_scoreboard = models.BooleanField(help_text=_('team is visible in scoreboard'), blank=False, null=False, default=True, db_index=True)
+    group = models.IntegerField(help_text=_('group identificator'), blank=1, null=False, default=1, db_index=True)
 
     USERNAME_FIELD = 'name'
 

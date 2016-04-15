@@ -9,13 +9,15 @@ class TeamAdmin(admin.ModelAdmin):
         'is_active',
         ('is_staff', 'is_superuser'),
         'last_login',
+        'in_scoreboard',
+        'group'
 #        'password',
     )
-    list_display = ('name', 'is_active', 'is_staff', 'is_superuser')
-    list_editable = ('is_active', 'is_staff', 'is_superuser')
-    list_filter = ('is_active', 'is_staff', 'is_superuser')
+    list_display = ('name', 'is_active', 'is_staff', 'is_superuser', 'in_scoreboard', 'group')
+    list_editable = ('is_active', 'is_staff', 'is_superuser', 'in_scoreboard', 'group')
+    list_filter = ('is_active', 'is_staff', 'is_superuser', 'group')
 
-    search_fields = ('name', )
+    search_fields = ('name', 'group')
     readonly_fields = ('last_login', 'password')
 
 admin.site.register(models.Team, TeamAdmin)

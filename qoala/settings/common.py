@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Django settings for qoala project.
 
@@ -15,9 +16,13 @@ import sys
 PROJECT_DIR = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 BASE_DIR = os.path.dirname(PROJECT_DIR)
 
-DATA_DIR = os.path.join(BASE_DIR, 'data')
+DATA_SUFFIX = os.environ.get('DATA_SUFFIX', '')
+
+DATA_DIR = os.path.join(BASE_DIR, 'data' + DATA_SUFFIX)
 TASKS_DIR = os.path.join(DATA_DIR, 'tasks')
 TASKS_DATA_DIR = os.path.join(DATA_DIR, 'tmptasks')
+
+INSTANCE_NAME = 'Qoala'
 
 # App/Library Paths
 sys.path.append(os.path.join(BASE_DIR, 'apps'))
@@ -52,6 +57,8 @@ AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend', 'teams.a
 LOGIN_REDIRECT_URL = '/'
 LOGIN_URL = '/teams/login'
 LOGOUT_URL = '/teams/logout'
+
+SHOW_ZEROS_ON_SCOREBOARD = False
 
 
 # Application definition
@@ -152,6 +159,8 @@ DEBUG_TOOLBAR_CONFIG = {
     'SHOW_TEMPLATE_CONTEXT': True,
     'ENABLE_STACKTRACES': True,
 }
+
+DEBUG_TOOLBAR_PATCH_SETTINGS = False
 
 # Uncomment these to activate and customize Celery:
 # CELERY_ALWAYS_EAGER = False  # required to activate celeryd

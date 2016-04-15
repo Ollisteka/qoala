@@ -32,9 +32,12 @@ class Command(BaseCommand):
                 elif fname == pre_short:
                     return pre_short, checker_path, 'ScriptQuestProvider'
 
-    def handle(self, *args, **options):
-        for taskdir in os.listdir(settings.TASKS_DIR):
-            path = os.path.join(settings.TASKS_DIR, taskdir)
+    def find_tasks(self, folder):
+        for taskdir in os.listdir(folder):
+            ### Ignore .git and .svn folders
+            if taskdir in ['.git', '.svn']:
+                continue
+            path = os.path.join(folder, taskdir)
             if os.path.isdir(path):
                 print("Checking {} for task".format(path))
                 res = self.find_task(path)
@@ -42,3 +45,8 @@ class Command(BaseCommand):
                     shortname, checker, provider = res
                     print("Loading task {} from {}".format(shortname, checker))
                     self.load_task(shortname, checker, provider)
+                else:
+                    self.find_tasks(path)
+
+    def handle(self, *args, **options):
+        self.find_tasks(settings.TASKS_DIR)

@@ -15,10 +15,13 @@ select quest.*, category.name as category_name ,
         select count(*) from quests_quest q2
         join quests_questvariant v2  on v2.quest_id = q2.id
         join quests_questanswer  a2 on a2.quest_variant_id = v2.id
+        join teams_team team on team.id = v2.team_id
         where
           a2.is_success and a2.is_checked
            and
           q2.id = quest.id
+           and
+          (team.is_active and not team.is_staff and not team.is_superuser and team.in_scoreboard)
       ) as solutions_count
 from quests_quest quest
  join quests_category category on quest.category_id = category.id
@@ -26,15 +29,20 @@ from quests_quest quest
  left join quests_questvariant variant   on variant.quest_id = quest.id and variant.team_id = %s
  left join quests_questanswer  answer    on answer.quest_variant_id = variant.id and answer.is_checked and answer.is_success
 group by quest.id, category.id
-order by category.number, category.name, quest.score
+order by category.id DESC, quest.score, substr('0000000000' || quest.shortname, -10, 10)
 """
+
+# substr('0000000000' || varchar, -10, 10) emulates padding for numeric ordering (otherwise 10 < 2)
 
 def groupby(collection, key):
     current = prev = object()
     res = []
     subres = []
     it = iter(collection)
-    first = next(it)
+    try:
+        first = next(it)
+    except StopIteration:
+        return []
     prev = getattr(first, key)
     subres.append(first)
     for el in it:
@@ -62,14 +70,14 @@ def get_task_board(team):
     return by_category
 
 
-scores_sql = """
+scores_sql_old = """
 select team.*, sum(COALESCE(answer.score,0)) as score
  from teams_team team
  left join quests_questvariant variant   on variant.team_id = team.id
 -- left join quests_quest        quest     on quest.id = variant.quest_id
  left join quests_questanswer  answer    on answer.quest_variant_id = variant.id
  where
-  (team.is_active and not team.is_staff and not team.is_superuser)
+  (team.is_active and not team.is_staff and not team.is_superuser and team.in_scoreboard)
   and
   (
    (answer.is_checked and answer.is_success)
@@ -78,6 +86,28 @@ select team.*, sum(COALESCE(answer.score,0)) as score
   )
 group by team.id
  order by score desc, max(answer.created_at)
+"""
+
+# Try to fix a bug with several correct answers for one task
+
+scores_sql = """
+select *, team_id, sum(task_score) as score
+ from (select team.*, team.id as team_id, max(COALESCE(answer.score, 0)) as task_score, max(answer.created_at) as max_answer_created_at from teams_team team
+ left join quests_questvariant variant   on variant.team_id = team.id
+ left join quests_questanswer  answer    on answer.quest_variant_id = variant.id
+ where
+  (team.is_active and not team.is_staff and not team.is_superuser and team.in_scoreboard)
+  and
+  (
+   (answer.is_checked and answer.is_success)
+   or
+   ( answer.id is null and answer.score is null )
+  )
+  group by team.id, variant.id
+  )
+group by team_id
+ order by score desc,
+ max(max_answer_created_at)
 """
 
 

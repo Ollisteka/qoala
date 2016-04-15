@@ -1,17 +1,35 @@
 {% extends "base.html" %}
 
+{% load humanize %}
+
 {% block title %}Team {{ team.name }}{% endblock %}
 
-{% block page_header %}{{ team.name }}-center!{% endblock %}
+{% block page_header %}{{ team.name }} <div style="font-size: 60%">{{ total_points }} point{{ total_points|pluralize }}, {{ place }} place</div> {% endblock %}
 
 {% block content %}
     
     <div class="solved-tasks">
+        {% for category_name, tasks in by_category %}
+            <div class="category">
+                <div class="category-name">
+                    {{ category_name }} <span class="label label-success">{{ tasks|length }} task{{ tasks|length|pluralize }}</span>
+                </div>
+                {% for task in tasks %}
+                    <div class="task">
+                        <h5><span class="badge">{{ task.score }}</span> <a href="{{ task.get_absolute_url }}">{{ task.name }}</a></h5>                        
+                    </div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+
+
+        {% comment %}
         {% for task in solved_tasks %}
             <div class="task">
                 <h5>{{ task.name  }} <span class="badge">{{ task.category.name }} : {{ task.score }}</span></h5>
             </div>
         {% endfor %}
+        {% endcomment %}
     </div>
 
 {% endblock %}

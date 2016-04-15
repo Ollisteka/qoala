@@ -27,6 +27,12 @@ class Command(BaseCommand):
                     default=False,
                     dest='by_someone',
                     help='Opens tasks only opened to someone'),
+        make_option('-u', '--user',
+                    action='store',
+                    default=False,
+                    dest='user',
+                    help='Opens tasks only for defined user login'),
+
     )
 
     def handle(self, *args, **options):
@@ -42,6 +48,8 @@ class Command(BaseCommand):
         if options['by_someone']:
 #            teams_ids = map(operator.attrgetter('id'), teams)
             filters['open_for__in'] = teams
+        if options['user']:
+            teams = [Team.objects.get(name=options['user'])]
 
         quests = quests.filter(**filters).distinct()
         num = 0

@@ -17,7 +17,7 @@ def open_task(req, task):
         return HttpResponseForbidden(_("This task is closed for you"))
 
     variant = task.get_variant(req.user)
-    return render(req, 'quests/open.html', {'variant': variant, 'form': forms.AnswerForm()})
+    return render(req, 'quests/open.html', {'variant': variant, 'form': forms.AnswerForm(), 'can_answer': task.can_answer(req.user)})
 
 
 @login_required

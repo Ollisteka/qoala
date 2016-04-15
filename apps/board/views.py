@@ -8,6 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 import logging
 import sys
+from django.conf import settings
 
 from .boards import *
 
@@ -22,7 +23,7 @@ def task_board(request):
 #@condition(last_modified_func=scoreboard_modified)
 def score_board(request):
     scores = get_scoreboard()
-    return render(request, 'board/scoreboard.html', {'teams': scores})
+    return render(request, 'board/scoreboard.html', {'teams': scores, 'show_zeros': settings.SHOW_ZEROS_ON_SCOREBOARD})
 
 
 def check_is_superuser(user):

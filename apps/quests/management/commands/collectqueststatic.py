@@ -1,6 +1,7 @@
 from django.core.management import BaseCommand
 from quests.models import Quest
 from os.path import dirname, join, exists, isdir
+from os import symlink, makedirs, listdir
 from django.conf import settings
 import shutil
 
@@ -22,7 +23,12 @@ class Command(BaseCommand):
                     shutil.rmtree(dst)
 
                 print("Coping files")
-                shutil.copytree(staticdir, dst)
+                #shutil.copytree(staticdir, dst)
+                if not exists(dst):
+                    makedirs(dst)
+                print staticdir, '->', dst
+                for inner_file in listdir(staticdir):
+                    symlink(join(staticdir, inner_file), join(dst, inner_file))
             else:
                 print("Have  no static files")
 

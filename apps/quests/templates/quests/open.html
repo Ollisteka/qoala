@@ -19,6 +19,7 @@
     <div class="well">
         {{ variant.html | safe }}
     </div>
+    {% if can_answer %}
     <div>
       <form class="form-inline" role="form" action="{% url 'quests.views.answer_task_by_id' variant.quest.id %}" method="post">
        {% csrf_token %}
@@ -30,5 +31,10 @@
         {% block verdict %} {% endblock %}
       </form>
     </div>
+    {% else %}
+    <div class="alert alert-success">
+        Вы уже решили это задание
+    </div>
+    {% endif %}
 
 {% endblock %}
