@@ -230,7 +230,7 @@ class QuestVariant(qtils.CreateAndUpdateDateMixin, models.Model):
 
     # All fields
 
-    def check(self, answer):
+    def check_field(self, answer):
         return self.quest.provider.OnUserAction(self.descriptor, answer)
 
 
@@ -258,7 +258,7 @@ class QuestAnswer(qtils.CreateAndUpdateDateMixin, qtils.ModelDiffMixin, models.M
         return cls.objects.filter(quest_variant__team__id=team.id, created_at__gte=timezone.now() - period).aggregate(
             count=Count('id'))['count']
 
-    def check(self):
+    def check_field(self):
         status, message = self.quest_variant.check(self.answer)
         self.is_checked = True
         self.is_success = status

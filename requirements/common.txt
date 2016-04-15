@@ -30,7 +30,7 @@ zope.cachedescriptors
 django-debug-toolbar
 
 # Migrations
-South
+# South
 
 # Feature testing
 #django-waffle

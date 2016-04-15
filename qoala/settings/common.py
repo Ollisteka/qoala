@@ -76,7 +76,7 @@ INSTALLED_APPS = (
     'djcelery',
 
     # Database migrations
-    'south',
+    # 'south',
 
     # Global context
     'base',
