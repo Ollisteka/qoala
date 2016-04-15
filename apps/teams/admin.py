@@ -21,4 +21,18 @@ class TeamAdmin(admin.ModelAdmin):
     search_fields = ('name', 'login', 'group')
     readonly_fields = ('last_login', 'password')
 
+
+class TeamLoginAdmin(admin.ModelAdmin):
+    list_display = ('team_name', 'logged_at', 'ip_address')
+    list_filter = ('team__name', )
+
+    search_fields = ('team__login', 'team__name', 'ip_address')
+
+    readonly_fields = ('logged_at', )
+
+    def team_name(self, obj):
+        return obj.team.name
+
+
 admin.site.register(models.Team, TeamAdmin)
+admin.site.register(models.TeamLogin, TeamLoginAdmin)

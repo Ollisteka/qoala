@@ -3,7 +3,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test
 from .forms import TokenAuthForm, PasswordAuthForm, RegisterForm
-from .models import Team, TeamManager
+from .models import Team, TeamManager, TeamLogin
 from quests.models import Quest
 from board.boards import get_scoreboard
 
@@ -70,15 +70,24 @@ def do_login_by_token(request):
         return render(request, "teams/login.html", {"form": TokenAuthForm()})
 
 
+def get_client_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
+
+
 def do_login(request):
     if request.method == "POST":
         form = PasswordAuthForm(data=request.POST)
         if form.is_valid():
             team = authenticate(username=form.cleaned_data['login'], password=form.cleaned_data['password'])
 
-            # Don't know why, but don't allow to login staff and admins via main form
             if team is not None:
-                login(request, team)
+                TeamLogin(team=team, ip_address=get_client_ip(request)).save()
+                login(request, team)                
                 return redirect("home")
             else:
                 form.errors['password'] = form.error_class(["Wrong login or password"])

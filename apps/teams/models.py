@@ -58,3 +58,11 @@ class Team(AbstractBaseUser, PermissionsMixin):
     def get_absolute_url(self):
         from django.core.urlresolvers import reverse
         return reverse('teams.views.show', args=[self.name])
+
+
+class TeamLogin(models.Model):
+    team = models.ForeignKey(Team)
+
+    logged_at = models.DateTimeField(auto_now_add=True)
+
+    ip_address = models.CharField(max_length=100)
