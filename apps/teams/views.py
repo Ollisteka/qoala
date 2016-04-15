@@ -49,6 +49,7 @@ def show(req, name):
     return render(req, 'teams/show.html', {"team": team, "total_points": total_points, "place": place, "solved_tasks": solved_tasks, "by_category": by_category})
 
 
+# Obsolete, don't use now
 def do_login_by_token(request):
     if request.method == "POST":
         form = TokenAuthForm(data=request.POST)
@@ -72,18 +73,15 @@ def do_login_by_token(request):
 def do_login(request):
     if request.method == "POST":
         form = PasswordAuthForm(data=request.POST)
-        if form.is_valid():            
+        if form.is_valid():
             team = authenticate(username=form.cleaned_data['login'], password=form.cleaned_data['password'])
 
             # Don't know why, but don't allow to login staff and admins via main form
-            if team is not None and not team.is_staff and not team.is_superuser:
+            if team is not None:
                 login(request, team)
                 return redirect("home")
             else:
-                if team is None:
-                    form.errors['password'] = form.error_class(["Wrong login or password"])
-                else:
-                    form.errors['password'] = form.error_class(["Special users can't login by password"])
+                form.errors['password'] = form.error_class(["Wrong login or password"])
         return render(request, "teams/login.html", {"form": form})
     else:
         return render(request, "teams/login.html", {"form": PasswordAuthForm()})
@@ -99,11 +97,9 @@ def set_lang(request, lang_code):
     from django.utils import translation
 
     translation.activate(lang_code)
-    #   request.session[translation.LANGUAGE_SESSION_KEY] = lang_code
     response = redirect(request.META['HTTP_REFERER'])
     response.set_cookie(settings.LANGUAGE_COOKIE_NAME, lang_code)
     return response
-    #    return
 
 
 def open_all_quests(team):
@@ -119,10 +115,11 @@ def register(request):
         ### Registration is disabled due attack 2015.11.17
         ### Registration is open since 2015.11.24
         if form.is_valid():
+            name = form.cleaned_data['name']
             login = form.cleaned_data['login']
             password = form.cleaned_data['password']
 
-            team = Team(name=login, is_staff=False, is_superuser=False)
+            team = Team(name=name, login=login, is_staff=False, is_superuser=False)
             team.set_password(password)
 
             try:

@@ -24,25 +24,26 @@ class TeamManager(BaseUserManager):
     def create_superuser(self, *args, **kwargs):
         self.create_team(is_staff=True, is_superuser=True, *args, **kwargs)
 
-    def create_team(self, name, password=None, is_staff=False, is_superuser=False):
-        if not name:
-            raise ValueError("Team must have nonempty name")
+    def create_team(self, login, password=None, is_staff=False, is_superuser=False, name=''):
+        if not login:
+            raise ValueError("Team must have nonempty login")
 
-        team = self.model(name=name, is_staff=is_staff, is_superuser=is_superuser)
+        team = self.model(name=name, login=login, is_staff=is_staff, is_superuser=is_superuser)
         team.set_password(password)
         team.save(using=self._db)
         return team
 
 
 class Team(AbstractBaseUser, PermissionsMixin):
-    name = models.CharField(max_length=60, help_text=_("team name"), blank=False, null=False, unique=True, db_index=True)
+    name = models.CharField(max_length=100, help_text=_("team name"), blank=True, null=False, db_index=True)
+    login = models.CharField(max_length=100, help_text=_(''), unique=True, db_index=True)
     is_staff = models.BooleanField(help_text=_('staff status'), blank=False, null=False, default=False, db_index=True)
     is_active = models.BooleanField(help_text=_('User can log in'), blank=False, null=False, default=True, db_index=True)
-    token = models.CharField(max_length=64, unique=True, blank=False, null=True, db_index=True)
+    token = models.CharField(max_length=100, unique=True, blank=False, null=True, db_index=True)
     in_scoreboard = models.BooleanField(help_text=_('team is visible in scoreboard'), blank=False, null=False, default=True, db_index=True)
     group = models.IntegerField(help_text=_('group identificator'), blank=1, null=False, default=1, db_index=True)
 
-    USERNAME_FIELD = 'name'
+    USERNAME_FIELD = 'login'
 
     objects = TeamManager()
 

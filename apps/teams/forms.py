@@ -14,4 +14,5 @@ class PasswordAuthForm(forms.Form):
 
 class RegisterForm(forms.Form):
     login = forms.CharField()
+    name = forms.CharField()
     password = forms.CharField()

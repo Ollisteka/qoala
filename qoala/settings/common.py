@@ -58,7 +58,7 @@ LOGIN_REDIRECT_URL = '/'
 LOGIN_URL = '/teams/login'
 LOGOUT_URL = '/teams/logout'
 
-SHOW_ZEROS_ON_SCOREBOARD = False
+SHOW_ZEROS_ON_SCOREBOARD = True
 
 
 # Application definition

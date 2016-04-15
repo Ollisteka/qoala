@@ -13,6 +13,10 @@
         <input type="text" id="login" name="login" class="form-control" placeholder="Login" required autofocus>
         {{ form.login.errors }}
 
+        <label for="login" class="sr-only">Name</label>
+        <input type="text" id="name" name="name" class="form-control" placeholder="Name" required>
+        {{ form.name.errors }}
+
         <label for="password" class="sr-only">Password</label>
         <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
 
